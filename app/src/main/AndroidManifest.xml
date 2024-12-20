@@ -16,6 +16,9 @@
         android:theme="@style/Theme.Smart_school_app_mirea"
         tools:targetApi="31">
         <activity
+            android:name=".TestActivity"
+            android:exported="false" />
+        <activity
             android:name=".FindCourses"
             android:exported="false" />
         <activity
