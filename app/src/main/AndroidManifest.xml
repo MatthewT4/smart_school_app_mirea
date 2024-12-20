@@ -16,6 +16,12 @@
         android:theme="@style/Theme.Smart_school_app_mirea"
         tools:targetApi="31">
         <activity
+            android:name=".FindCourses"
+            android:exported="false" />
+        <activity
+            android:name=".TopicActivity"
+            android:exported="false" />
+        <activity
             android:name=".CoursePage"
             android:exported="false" />
         <activity

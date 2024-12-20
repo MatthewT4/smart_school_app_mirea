@@ -1,6 +1,7 @@
 package com.example.smart_school_app_mirea
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -39,5 +40,14 @@ class CourseElementsAdapter(var items: List<CourseElement>, var context: Context
         holder.elementType.text = elementTypeText
         holder.elementType.setBackgroundColor(elementTypeColor)
         holder.title.text = items[position].title
+
+        holder.button.setOnClickListener{
+            val intent = Intent(context, TopicActivity::class.java)
+
+            intent.putExtra("topicTitle", items[position].title)
+            intent.putExtra("topicBody", items[position].topicBody)
+
+            context.startActivity(intent)
+        }
     }
 }

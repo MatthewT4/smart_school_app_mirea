@@ -1,13 +1,26 @@
 package com.example.smart_school_app_mirea
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.recyclerview.widget.RecyclerView
+
+import okhttp3.*
+import com.google.gson.Gson
+import java.io.IOException
+
+import com.google.gson.JsonObject
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+
 
 class CourseItemsAdapter(var items: List<Course>, var context: Context)
     : RecyclerView.Adapter<CourseItemsAdapter.MyViewHolder>() {
@@ -28,18 +41,28 @@ class CourseItemsAdapter(var items: List<Course>, var context: Context)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        val courseID = items[position].id
+
         holder.title.text = items[position].title
         holder.desc.text = items[position].description
 
+
         var buttonText = "Подключиться"
-        var buttonColor = Color.RED
+        var buttonColor = Color.parseColor("#bd3e3e")
         if (items[position].user_invited_in_course == true) {
             buttonText = "Перейти"
             buttonColor = Color.GRAY
         }
         holder.button.text = buttonText
         holder.button.setBackgroundColor(buttonColor)
+        holder.button.setOnClickListener{
+            val intent = Intent(context, CoursePage::class.java)
 
+            intent.putExtra("courseID", courseID)
 
+            context.startActivity(intent)
+        }
     }
+
+
 }

@@ -6,5 +6,5 @@ enum class ElementType {
 }
 
 
-class CourseElement(var id: String, var title: String, var elementType: ElementType, topicBody: String) {
+class CourseElement(var id: String, var title: String, var elementType: ElementType, var topicBody: String) {
 }

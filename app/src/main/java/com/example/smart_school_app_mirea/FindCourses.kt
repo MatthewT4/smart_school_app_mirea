@@ -1,9 +1,9 @@
 package com.example.smart_school_app_mirea
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -11,35 +11,47 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Recycler
-
 import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 
-
-class MyCourses : AppCompatActivity() {
+class FindCourses : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_my_courses)
+        setContentView(R.layout.activity_find_courses)
 
-        val itemsList: RecyclerView = findViewById(R.id.my_courses_items_list)
+        val searchReq: EditText = findViewById(R.id.find_courses_search)
+        val itemsList: RecyclerView = findViewById(R.id.find_courses_items_list)
         val items = arrayListOf<Course>()
-        val buttonToFind: Button = findViewById(R.id.my_courses_button_to_find)
-
-        buttonToFind.setOnClickListener {
-            val intent = Intent(this, FindCourses::class.java)
-            this.startActivity(intent)
-        }
 
         val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", "")
 
-        sendGetRequest(token!!) { result ->
+        searchReq.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                // Здесь можно выполнять действие после изменений
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Здесь можно выполнять действие перед изменениями
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                find(token!!, s.toString(), itemsList)
+            }
+        })
+
+        find(token!!, "", itemsList)
+    }
+
+    fun find(token: String, like: String, itemsList: RecyclerView) {
+        findCourses(token!!, like) { result ->
             runOnUiThread {
                 result.onSuccess { courses ->
                     itemsList.layoutManager = LinearLayoutManager(this)
@@ -48,15 +60,16 @@ class MyCourses : AppCompatActivity() {
                     Toast
                         .makeText(this, "Произошла ошибка, попробуйте позднее", Toast.LENGTH_LONG)
                         .show()
-                    }
                 }
             }
         }
     }
+}
 
-fun sendGetRequest(token: String, callback: (Result<ArrayList<Course>>) -> Unit) {
+
+fun findCourses(token: String, like: String, callback: (Result<ArrayList<Course>>) -> Unit) {
     val client = OkHttpClient()
-    val url = "http://10.0.2.2:8080/courses?my=true"
+    val url = "http://10.0.2.2:8080/courses?like=$like"
 
     val request = Request.Builder()
         .url(url)
@@ -75,7 +88,9 @@ fun sendGetRequest(token: String, callback: (Result<ArrayList<Course>>) -> Unit)
                     return
                 }
 
-                val responseBody = response.body?.string() ?: return callback(Result.failure(IOException("Response body is null")))
+                val responseBody = response.body?.string() ?: return callback(Result.failure(
+                    IOException("Response body is null")
+                ))
                 try {
                     val gson = Gson()
                     val listType = object : TypeToken<List<Course>>() {}.type
