@@ -1,40 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context=".CoursePage">
+    android:padding="20dp"
+    android:orientation="vertical">
 
+    <!-- Заголовок теста -->
     <TextView
         android:id="@+id/test_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Test name"
         android:textStyle="bold"
         android:textSize="25sp"
-        android:layout_marginTop="60dp"
-        android:layout_gravity="center"
-        android:text="Test name" />
-    <View
-        android:layout_width="match_parent"
-        android:layout_marginTop="5dp"
-        android:layout_height="1dp"
-        android:background="#2D2D2D" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center" />
 
+    <!-- Разделительная линия -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2D2D2D"
+        app:layout_constraintTop_toBottomOf="@id/test_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- RecyclerView для вопросов -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/test_elements"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="30dp" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/test_button"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
 
+    <!-- Кнопка завершить -->
     <Button
-        android:id="@+id/course_element_button"
-        android:layout_width="110dp"
-        android:layout_height="38dp"
-        android:layout_gravity="center"
+        android:id="@+id/test_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Завершить"
-        android:textSize="16dp" />
-</LinearLayout>
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/test_elements"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <!-- Текст результата -->
+    <TextView
+        android:id="@+id/test_result_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат здесь"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#808080"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/test_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

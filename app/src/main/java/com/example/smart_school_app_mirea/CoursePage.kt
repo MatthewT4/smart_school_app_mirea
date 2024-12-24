@@ -74,27 +74,6 @@ class CoursePage : AppCompatActivity() {
     }
 }
 
-data class Topic(
-    val id: String,
-    val course_id: String,
-    val title: String,
-    val body: String
-)
-
-data class Element(
-    val element_id: String,
-    val element_type: String,
-    val index: Int
-)
-
-data class CourseDetail(
-    val id: String,
-    val title: String,
-    val description: String,
-    val user_invited_in_course: Boolean,
-    val topics: List<Topic>,
-    val elements: List<Element>
-)
 
 fun inviteInCourseRequest(courseID: String, token: String, callback: (Result<Unit>) -> Unit) {
     println("token")
@@ -132,6 +111,48 @@ fun inviteInCourseRequest(courseID: String, token: String, callback: (Result<Uni
         }
     })
 }
+
+data class Topic(
+    val id: String,
+    val course_id: String,
+    val title: String,
+    val body: String
+)
+
+data class Element(
+    val element_id: String,
+    val element_type: String,
+    val index: Int
+)
+
+data class TestElement(
+    val id: String,
+    val test_id: String,
+    val title: String,
+    val correct_answer: String?,
+    val index: Int,
+    var user_answer: String?,
+    val score: Int?
+)
+
+data class Test(
+    val id: String,
+    val course_id: String,
+    val title: String,
+    val elements: List<TestElement>,
+    val max_score: Int?,
+    val result_score: Int?
+)
+
+data class CourseDetail(
+    val id: String,
+    val title: String,
+    val description: String,
+    val user_invited_in_course: Boolean,
+    val topics: List<Topic>,
+    val elements: List<Element>,
+    val tests: List<Test>
+)
 
 fun sendGetCourseRequest(courseId: String, token: String, callback: (Result<CourseDetail>) -> Unit) {
     val client = OkHttpClient()
@@ -171,22 +192,48 @@ fun sendGetCourseRequest(courseId: String, token: String, callback: (Result<Cour
 }
 
 fun convertCourseDetailToCourseElements(courseDetail: CourseDetail): List<CourseElement> {
-    // Создадим мапу для быстрого доступа к топикам по id
+    // Создадим словарь для быстрого доступа к топикам по id
     val topicMap = courseDetail.topics.associateBy { it.id }
 
-    // Пройдем по элементам и составим список CourseElement
-    return courseDetail.elements.mapNotNull { element ->
-        // Найдем соответствующий топик по element_id
-        val topic = topicMap[element.element_id]
+    // Создадим словарь для быстрого доступа к тестам по id
+    val testMap = courseDetail.tests.associateBy { it.id }
 
-        // Если топик найден, создаём объект CourseElement
-        topic?.let {
-            CourseElement(
-                id = it.id,
-                title = it.title,
-                elementType = ElementType.Topic,
-                topicBody = it.body
-            )
+    // Пройдем по элементам и составим список CourseElement
+    return courseDetail.elements
+        .sortedBy { it.index } // Сортируем элементы по индексу
+        .mapNotNull { element ->
+        when (element.element_type) {
+            "topic" -> {
+                // Найдём соответствующий топик по element_id
+                val topic = topicMap[element.element_id]
+
+                // Если топик найден, создаём объект CourseElement
+                topic?.let {
+                    CourseElement(
+                        id = it.id,
+                        title = it.title,
+                        elementType = ElementType.Topic,
+                        topicBody = it.body
+                    )
+                }
+            }
+            "test" -> {
+                // Найдём соответствующий тест по element_id
+                val test = testMap[element.element_id]
+
+                // Если тест найден, создаём объект CourseElement
+                test?.let {
+                    CourseElement(
+                        id = it.id,
+                        title = it.title,
+                        elementType = ElementType.Test,
+                        maxScore = it.max_score,
+                        resultScore = it.result_score,
+                        testElements = it.elements
+                    )
+                }
+            }
+            else -> null // Если тип неизвестен, пропускаем элемент
         }
     }
 }

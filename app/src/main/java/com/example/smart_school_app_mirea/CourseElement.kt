@@ -6,5 +6,12 @@ enum class ElementType {
 }
 
 
-class CourseElement(var id: String, var title: String, var elementType: ElementType, var topicBody: String) {
-}
+data class CourseElement(
+    val id: String,
+    val title: String,
+    val elementType: ElementType,
+    val topicBody: String? = null, // Только для топиков
+    val maxScore: Int? = null,     // Только для тестов
+    val resultScore: Int? = null,  // Только для тестов
+    val testElements: List<TestElement>? = null // Только для тестов
+)

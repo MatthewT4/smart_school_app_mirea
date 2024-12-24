@@ -31,23 +31,39 @@ class CourseElementsAdapter(var items: List<CourseElement>, var context: Context
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         var elementTypeText = ""
         var elementTypeColor = Color.parseColor("#ffabab")
+        var buttonColor = Color.parseColor("#ffabab")
         if (items[position].elementType == ElementType.Topic) {
             elementTypeText = "Теория"
+            holder.button.setOnClickListener{
+                val intent = Intent(context, TopicActivity::class.java)
+
+                intent.putExtra("topicTitle", items[position].title)
+                intent.putExtra("topicBody", items[position].topicBody!!)
+
+                context.startActivity(intent)
+            }
         } else {
             elementTypeText = "Практика"
             elementTypeColor = Color.parseColor("#759cff")
+            buttonColor = Color.parseColor("#759cff")
+            var buttonText = "Выполнить"
+            if (items[position].maxScore != null) {
+                buttonColor = Color.parseColor("#bababa")
+                buttonText = "Посмотреть"
+            }
+            holder.button.text = buttonText
+            holder.button.setOnClickListener{
+                val intent = Intent(context, TestActivity::class.java)
+
+                intent.putExtra("testID", items[position].id)
+
+                context.startActivity(intent)
+            }
         }
         holder.elementType.text = elementTypeText
         holder.elementType.setBackgroundColor(elementTypeColor)
         holder.title.text = items[position].title
+        holder.button.setBackgroundColor(buttonColor)
 
-        holder.button.setOnClickListener{
-            val intent = Intent(context, TopicActivity::class.java)
-
-            intent.putExtra("topicTitle", items[position].title)
-            intent.putExtra("topicBody", items[position].topicBody)
-
-            context.startActivity(intent)
-        }
     }
 }
