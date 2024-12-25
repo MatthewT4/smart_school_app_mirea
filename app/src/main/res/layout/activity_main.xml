@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#A3D5D5D5"
     tools:context=".MainActivity">
 
     <TextView
@@ -52,7 +51,7 @@
         android:id="@+id/reg_button"
         android:layout_width="220dp"
         android:layout_gravity="center"
-        android:backgroundTint="#23425A"
+        android:backgroundTint="#759cff"
         android:layout_marginTop="10dp"
         android:layout_height="wrap_content"
         android:text="Войти" />

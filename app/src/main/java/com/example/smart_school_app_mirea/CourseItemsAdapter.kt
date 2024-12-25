@@ -48,10 +48,10 @@ class CourseItemsAdapter(var items: List<Course>, var context: Context)
 
 
         var buttonText = "Подключиться"
-        var buttonColor = Color.parseColor("#bd3e3e")
+        var buttonColor = Color.parseColor("#ffabab")
         if (items[position].user_invited_in_course == true) {
             buttonText = "Перейти"
-            buttonColor = Color.GRAY
+            buttonColor = Color.parseColor("#bababa")
         }
         holder.button.text = buttonText
         holder.button.setBackgroundColor(buttonColor)

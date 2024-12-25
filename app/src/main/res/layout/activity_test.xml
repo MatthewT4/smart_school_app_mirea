@@ -50,6 +50,7 @@
         android:layout_height="wrap_content"
         android:text="Завершить"
         android:textSize="16sp"
+        android:backgroundTint="#759cff"
         app:layout_constraintTop_toBottomOf="@id/test_elements"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
