@@ -3,23 +3,18 @@ package com.example.smart_school_app_mirea
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Recycler
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import okhttp3.*
 import java.io.IOException
-
 
 class MyCourses : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +24,7 @@ class MyCourses : AppCompatActivity() {
 
         val itemsList: RecyclerView = findViewById(R.id.my_courses_items_list)
         val items = arrayListOf<Course>()
-        val buttonToFind: Button = findViewById(R.id.my_courses_button_to_find)
+        val buttonToFind: FloatingActionButton = findViewById(R.id.my_courses_button_to_find)
 
         buttonToFind.setOnClickListener {
             val intent = Intent(this, FindCourses::class.java)
@@ -48,46 +43,46 @@ class MyCourses : AppCompatActivity() {
                     Toast
                         .makeText(this, "Произошла ошибка, попробуйте позднее", Toast.LENGTH_LONG)
                         .show()
-                    }
                 }
             }
         }
     }
 
-fun sendGetRequest(token: String, callback: (Result<ArrayList<Course>>) -> Unit) {
-    val client = OkHttpClient()
-    val url = "http://10.0.2.2:8080/courses?my=true"
+    fun sendGetRequest(token: String, callback: (Result<ArrayList<Course>>) -> Unit) {
+        val client = OkHttpClient()
+        val url = "http://10.0.2.2:8080/courses?my=true"
 
-    val request = Request.Builder()
-        .url(url)
-        .addHeader("Authorization", token)
-        .build()
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("Authorization", token)
+            .build()
 
-    client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            callback(Result.failure(e))
-        }
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callback(Result.failure(e))
+            }
 
-        override fun onResponse(call: Call, response: Response) {
-            response.use {
-                if (!response.isSuccessful) {
-                    callback(Result.failure(IOException("Unexpected response code: ${response.code}")))
-                    return
-                }
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) {
+                        callback(Result.failure(IOException("Unexpected response code: ${response.code}")))
+                        return
+                    }
 
-                val responseBody = response.body?.string() ?: return callback(Result.failure(IOException("Response body is null")))
-                try {
-                    val gson = Gson()
-                    val listType = object : TypeToken<List<Course>>() {}.type
-                    // Парсинг и преобразование в ArrayList
-                    val courses: ArrayList<Course> = gson.fromJson<List<Course>>(responseBody, listType)
-                        .toCollection(ArrayList())
+                    val responseBody = response.body?.string() ?: return callback(Result.failure(IOException("Response body is null")))
+                    try {
+                        val gson = Gson()
+                        val listType = object : TypeToken<List<Course>>() {}.type
+                        // Парсинг и преобразование в ArrayList
+                        val courses: ArrayList<Course> = gson.fromJson<List<Course>>(responseBody, listType)
+                            .toCollection(ArrayList())
 
-                    callback(Result.success(courses))
-                } catch (e: Exception) {
-                    callback(Result.failure(IOException("Error parsing JSON response", e)))
+                        callback(Result.success(courses))
+                    } catch (e: Exception) {
+                        callback(Result.failure(IOException("Error parsing JSON response", e)))
+                    }
                 }
             }
-        }
-    })
+        })
+    }
 }

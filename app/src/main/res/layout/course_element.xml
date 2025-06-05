@@ -1,44 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/course_element_type"
-        android:layout_width="60dp"
+        android:layout_width="wrap_content"
         android:background="@drawable/round_textview"
-        android:paddingHorizontal="5dp"
-        android:paddingVertical="3dp"
-        android:textSize="10dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:textSize="11sp"
         android:gravity="center"
         android:textColor="#F8F8F8"
         android:textStyle="bold"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="4dp"
         android:text="Занятие" />
 
     <TextView
         android:id="@+id/course_element_title"
-        android:layout_marginLeft="5dp"
         android:layout_width="match_parent"
         android:textStyle="bold"
-        android:textSize="22dp"
+        android:textSize="16sp"
+        android:textColor="@color/text_primary"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Урок 1" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/course_element_button"
-        android:layout_width="140dp"
-        android:layout_height="40dp"
-        android:textSize="14dp"
-        android:layout_gravity="end"
-        android:text="Перейти" />
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:text="Перейти"
+        android:textSize="13sp"
+        android:paddingHorizontal="16dp"
+        app:cornerRadius="6dp"
+        style="@style/Widget.MaterialComponents.Button"
+        android:backgroundTint="@color/primary"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="end" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_marginTop="5dp"
         android:layout_height="1dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="8dp"
         android:background="#2D2D2D" />
 </LinearLayout>

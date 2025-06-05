@@ -3,6 +3,7 @@ package com.example.smart_school_app_mirea
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,15 +21,18 @@ class CourseElementsAdapter(var items: List<CourseElement>, var context: Context
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        Log.d("CourseElementsAdapter", "Creating view holder")
         val view = LayoutInflater.from(parent.context).inflate(R.layout.course_element, parent, false)
         return MyViewHolder(view)
     }
 
     override fun getItemCount(): Int {
+        Log.d("CourseElementsAdapter", "Item count: ${items.count()}")
         return items.count()
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        Log.d("CourseElementsAdapter", "Binding view holder at position $position")
         var elementTypeText = ""
         var elementTypeColor = Color.parseColor("#ffabab")
         var buttonColor = Color.parseColor("#ffabab")
@@ -36,10 +40,8 @@ class CourseElementsAdapter(var items: List<CourseElement>, var context: Context
             elementTypeText = "Теория"
             holder.button.setOnClickListener{
                 val intent = Intent(context, TopicActivity::class.java)
-
                 intent.putExtra("topicTitle", items[position].title)
                 intent.putExtra("topicBody", items[position].topicBody!!)
-
                 context.startActivity(intent)
             }
         } else {
@@ -54,9 +56,7 @@ class CourseElementsAdapter(var items: List<CourseElement>, var context: Context
             holder.button.text = buttonText
             holder.button.setOnClickListener{
                 val intent = Intent(context, TestActivity::class.java)
-
                 intent.putExtra("testID", items[position].id)
-
                 context.startActivity(intent)
             }
         }
@@ -64,6 +64,6 @@ class CourseElementsAdapter(var items: List<CourseElement>, var context: Context
         holder.elementType.setBackgroundColor(elementTypeColor)
         holder.title.text = items[position].title
         holder.button.setBackgroundColor(buttonColor)
-
+        Log.d("CourseElementsAdapter", "Bound element: ${items[position].title}")
     }
 }

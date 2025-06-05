@@ -33,6 +33,9 @@ class CoursePage : AppCompatActivity() {
         val description: TextView = findViewById(R.id.course_desc)
         val courseElements: RecyclerView = findViewById(R.id.course_elements)
 
+        // Устанавливаем LayoutManager для RecyclerView
+        courseElements.layoutManager = LinearLayoutManager(this)
+
         val sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
         val token = sharedPreferences.getString("auth_token", "")
 
@@ -41,15 +44,19 @@ class CoursePage : AppCompatActivity() {
         sendGetCourseRequest(courseID!!, token!!) { result ->
             runOnUiThread {
                 result.onSuccess { courseDetail ->
-                    println(courseDetail)
+                    Log.d("CoursePage", "Received course detail: $courseDetail")
+                    Log.d("CoursePage", "Topics count: ${courseDetail.topics.size}")
+                    Log.d("CoursePage", "Tests count: ${courseDetail.tests.size}")
+                    Log.d("CoursePage", "Elements count: ${courseDetail.elements.size}")
 
                     val elements = convertCourseDetailToCourseElements(courseDetail)
+                    Log.d("CoursePage", "Converted elements count: ${elements.size}")
+                    
                     title.text = courseDetail.title
                     description.text = courseDetail.description
-                    courseElements.layoutManager = LinearLayoutManager(this)
                     courseElements.adapter = CourseElementsAdapter(elements, this)
                 }.onFailure { exception ->
-                    println(exception)
+                    Log.e("CoursePage", "Error loading course", exception)
                     Toast
                         .makeText(this, "Произошла ошибка, попробуйте позднее", Toast.LENGTH_LONG)
                         .show()
@@ -192,48 +199,34 @@ fun sendGetCourseRequest(courseId: String, token: String, callback: (Result<Cour
 }
 
 fun convertCourseDetailToCourseElements(courseDetail: CourseDetail): List<CourseElement> {
-    // Создадим словарь для быстрого доступа к топикам по id
-    val topicMap = courseDetail.topics.associateBy { it.id }
-
-    // Создадим словарь для быстрого доступа к тестам по id
-    val testMap = courseDetail.tests.associateBy { it.id }
-
-    // Пройдем по элементам и составим список CourseElement
-    return courseDetail.elements
-        .sortedBy { it.index } // Сортируем элементы по индексу
-        .mapNotNull { element ->
-        when (element.element_type) {
-            "topic" -> {
-                // Найдём соответствующий топик по element_id
-                val topic = topicMap[element.element_id]
-
-                // Если топик найден, создаём объект CourseElement
-                topic?.let {
-                    CourseElement(
-                        id = it.id,
-                        title = it.title,
-                        elementType = ElementType.Topic,
-                        topicBody = it.body
-                    )
-                }
-            }
-            "test" -> {
-                // Найдём соответствующий тест по element_id
-                val test = testMap[element.element_id]
-
-                // Если тест найден, создаём объект CourseElement
-                test?.let {
-                    CourseElement(
-                        id = it.id,
-                        title = it.title,
-                        elementType = ElementType.Test,
-                        maxScore = it.max_score,
-                        resultScore = it.result_score,
-                        testElements = it.elements
-                    )
-                }
-            }
-            else -> null // Если тип неизвестен, пропускаем элемент
-        }
+    val elements = mutableListOf<CourseElement>()
+    
+    // Add topics
+    courseDetail.topics.forEach { topic ->
+        elements.add(
+            CourseElement(
+                id = topic.id,
+                title = topic.title,
+                elementType = ElementType.Topic,
+                topicBody = topic.body
+            )
+        )
     }
+    
+    // Add tests
+    courseDetail.tests.forEach { test ->
+        elements.add(
+            CourseElement(
+                id = test.id,
+                title = test.title,
+                elementType = ElementType.Test,
+                maxScore = test.max_score,
+                resultScore = test.result_score,
+                testElements = test.elements
+            )
+        )
+    }
+    
+    // Sort by index if available
+    return elements.sortedBy { it.id }
 }
